@@ -98,7 +98,7 @@ message("${QAPB} Used Storage : ${LIGHT}${DISK_USAGE} ${DISK_USAGE_PERCENT}${RES
 # - Set C++ Standard
 set(CMAKE_CXX_STANDARD 11)
 
-# - Find Requiered Packages
+# - Find Required Packages
 if (DEFINED _USE_PACKAGES)
     foreach(UserPackage ${_USE_PACKAGES})
         message("${QAPB} Finding Package ${LIGHT}${UserPackage}${TEXT} ...${RESET}")
@@ -111,14 +111,22 @@ endif ()
 
 # - Add Source Files
 if (DEFINED _SRC)
+    set(DIRECTORY_SET)
     foreach(SOURCE_FILE ${_SRC})
         message("${QAPB} Checking Input Source ${LIGHT}${SOURCE_FILE}${RESET}")
         if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}")
             message("${SUCCESS} Found Source File ${LIGHT}${SOURCE_FILE}${RESET}")
+            get_filename_component(DIR "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}" DIRECTORY)
+            list(APPEND DIRECTORY_SET ${DIR})
         else ()
             message("${FAILED} Source File ${LIGHT}${SOURCE_FILE}${TEXT} Not Found${RESET}")
             return()
         endif ()
+    endforeach()
+    list(REMOVE_DUPLICATES DIRECTORY_SET)
+    foreach(DIR ${DIRECTORY_SET})
+        message("${QAPB} Including Directory ${LIGHT}${DIR}${RESET}")
+        include_directories(${DIR})
     endforeach()
 else ()
     message("${QAPB} Checking Source File ...${RESET}")
